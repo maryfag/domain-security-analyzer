@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OSINT Scam Website Checker</title>
+    <style>
+        body { font-family: sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; background-color: #121212; color: #ffffff; }
+        input { width: 70%; padding: 10px; margin-right: 10px; background: #222; color: #fff; border: 1px solid #444; }
+        button { padding: 10px 20px; cursor: pointer; background: #007acc; color: white; border: none; }
+        #result { margin-top: 20px; padding: 15px; border: 1px solid #444; background: #1e1e1e; display: none; }
+    </style>
+</head>
+<body>
+
+    <h2>Domain Security Analyzer</h2>
+    <p>Enter a URL below to check its registration footprint.</p>
+
+    <input type="text" id="targetUrl" placeholder="e.g., google.com">
+    <button onclick="runAnalysis()">Analyze</button>
+
+    <div id="result"></div>
+
+    <script>
+        async function runAnalysis() {
+            const urlInput = document.getElementById('targetUrl').value;
+            const resultDiv = document.getElementById('result');
+
+            if(!urlInput) return alert("Please enter a URL first!");
+
+            resultDiv.style.display = "block";
+            resultDiv.innerText = "Analyzing target registration...";
+
+            // JavaScript Fetch API shoots data straight to our local Flask backend
+            const response = await fetch('/scan', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ url: urlInput })
+            });
+
+            const data = await response.json();
+            resultDiv.innerText = data.message;
+        }
+    </script>
+
+</body>
+</html>
